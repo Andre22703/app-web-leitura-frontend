@@ -1,85 +1,186 @@
 const API_BASE = process.env.REACT_APP_API_URL;
 
-export async function fetchFornecedores() {
-  const res = await fetch(`${API_BASE}/fornecedores`);
-  if (!res.ok) throw new Error('Erro ao buscar fornecedores');
-  return res.json();
+// Header para evitar a página de aviso do ngrok
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true'
+};
+
+// Escuto a resposta, seu som no ar,
+// Clono o texto para poder guardar.
+// Cabeçalhos busco para me informar,
+// Se o JSON vier, eu vou celebrar.
+async function logResponse(res) {
+  console.log('Status:', res.status, res.statusText);
+  const text = await res.clone().text(); // clona para não perder o body
+  console.log('Response text:', text);
+  return {
+    res,
+    text,
+    contentType: res.headers.get('content-type') || ''
+  };
 }
 
-export async function fetchFamilias() {
-  const response = await fetch(`${API_BASE}/familias`);
-  if (!response.ok) throw new Error('Erro ao buscar famílias');
-  return await response.json();
-}
-
-export async function fetchSubfamilias() {
-  const res = await fetch(`${API_BASE}/subfamilias`);
-  if (!res.ok) throw new Error('Erro ao buscar subfamílias');
-  return res.json();
-}
-
-
-export async function fetchProdutoPorCodigo(codigo, fornecedorId) {
-  const res = await fetch(`${API_BASE}/produto/${codigo}?fornecedor=${fornecedorId}`);
+// Se a resposta não é JSON, é confusão,
+// Levanto um erro com toda a precisão.
+// Se o status não for OK, há frustração,
+// Caso contrário, retorno a conversação.
+async function checkJsonResponse(resObj) {
+  const { res, text, contentType } = resObj;
   if (!res.ok) {
-    if (res.status === 404) throw new Error('Produto não pertence ao fornecedor selecionado.');
+    throw new Error(`Erro HTTP: ${res.status} - ${text.slice(0, 100)}`);
+  }
+  if (!contentType.includes('application/json')) {
+    throw new Error(`Resposta inesperada da API (não é JSON): ${text.slice(0, 100)}`);
+  }
+  return JSON.parse(text);
+}
+
+/* Fornecedores vêm na mão,
+Com nomes e identificação,
+Busco-os com dedicação,
+Para a app ganhar direção. */
+export async function fetchFornecedores() {
+  const url = `${API_BASE}/fornecedores`;
+  console.log('Fetching:', url);
+  const resObj = await logResponse(await fetch(url, {
+    headers: NGROK_HEADERS
+  }));
+  return checkJsonResponse(resObj);
+}
+
+/* Famílias vêm em sequência,
+Categorias com essência,
+Busco-as com paciência,
+Pra dar ao código presença. */
+export async function fetchFamilias() {
+  const url = `${API_BASE}/familias`;
+  console.log('Fetching:', url);
+  const resObj = await logResponse(await fetch(url, {
+    headers: NGROK_HEADERS
+  }));
+  return checkJsonResponse(resObj);
+}
+
+/* Subfamílias a detalhar,
+Dentro do todo a explicar,
+Busco dados para mostrar,
+E o sistema aprimorar. */
+export async function fetchSubfamilias() {
+  const url = `${API_BASE}/subfamilias`;
+  console.log('Fetching:', url);
+  const resObj = await logResponse(await fetch(url, {
+    headers: NGROK_HEADERS
+  }));
+  return checkJsonResponse(resObj);
+}
+
+/* Produto busco pelo código e fornecedor,
+Se não pertencer, lança-se o torpor,
+Se não existir, erro com vigor,
+Se JSON chegar, é puro amor. */
+export async function fetchProdutoPorCodigo(codigo, fornecedorId) {
+  const url = `${API_BASE}/produto/${codigo}?fornecedor=${fornecedorId}`;
+  console.log('Fetching:', url);
+  const resObj = await logResponse(await fetch(url, {
+    headers: NGROK_HEADERS
+  }));
+  
+  if (!resObj.res.ok) {
+    if (resObj.res.status === 404) throw new Error('Produto não pertence ao fornecedor selecionado.');
     throw new Error('Produto não encontrado');
   }
-  return res.json();
+  if (!resObj.contentType.includes('application/json')) {
+    throw new Error(`Resposta inesperada da API (não é JSON): ${resObj.text.slice(0, 100)}`);
+  }
+  return JSON.parse(resObj.text);
 }
 
+/* Atualizar stock com precisão,
+Soma ou subtração,
+PATCH no coração,
+Pra manter a informação. */
 export async function atualizarStock(codbarras, quantidadeAdd) {
-  const res = await fetch(`${API_BASE}/produto/${codbarras}/stock`, {
+  const url = `${API_BASE}/produto/${codbarras}/stock`;
+  console.log('PATCH:', url, 'Body:', { quantidade: Number(quantidadeAdd) });
+  const resObj = await logResponse(await fetch(url, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...NGROK_HEADERS
+    },
     body: JSON.stringify({ quantidade: Number(quantidadeAdd) }),
-  });
-  if (!res.ok) throw new Error('Falha ao atualizar stock');
-  return res.json();
+  }));
+  return checkJsonResponse(resObj);
 }
 
+/* Preço novo a definir,
+Valor para atribuir,
+PATCH para transmitir,
+Dados que vão fluir. */
 export async function atualizarPreco(codbarras, novoPreco) {
-  const res = await fetch(`${API_BASE}/produto/${codbarras}/preco`, {
+  const url = `${API_BASE}/produto/${codbarras}/preco`;
+  console.log('PATCH:', url, 'Body:', { preco: parseFloat(novoPreco) });
+  const resObj = await logResponse(await fetch(url, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...NGROK_HEADERS
+    },
     body: JSON.stringify({ preco: parseFloat(novoPreco) }),
-  });
-  if (!res.ok) throw new Error('Erro ao atualizar preço');
-  return res.json();
+  }));
+  return checkJsonResponse(resObj);
 }
 
+/* Preço de compra a atualizar,
+Valor certo pra calcular,
+PATCH para enviar,
+O sistema vai ajustar. */
 export async function atualizarPrecoCompra(codbarras, novoPrecoCompra) {
-  const res = await fetch(`${API_BASE}/produto/${codbarras}/precocompra`, {
+  const url = `${API_BASE}/produto/${codbarras}/precocompra`;
+  console.log('PATCH:', url, 'Body:', { preco: parseFloat(novoPrecoCompra) });
+  const resObj = await logResponse(await fetch(url, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...NGROK_HEADERS
+    },
     body: JSON.stringify({ preco: parseFloat(novoPrecoCompra) }),
-  });
-  if (!res.ok) throw new Error('Erro ao atualizar preço de compra');
-  return res.json();
+  }));
+  return checkJsonResponse(resObj);
 }
 
+/* Margem bruta a alterar,
+Para o lucro equilibrar,
+PATCH para enviar,
+Dados para atualizar. */
 export async function atualizarMargemBruta(codbarras, novaMargem) {
-  const res = await fetch(`${API_BASE}/produto/${codbarras}/margembruta`, {
+  const url = `${API_BASE}/produto/${codbarras}/margembruta`;
+  console.log('PATCH:', url, 'Body:', { margembruta: parseFloat(novaMargem) });
+  const resObj = await logResponse(await fetch(url, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...NGROK_HEADERS
+    },
     body: JSON.stringify({ margembruta: parseFloat(novaMargem) }),
-  });
-  if (!res.ok) throw new Error('Erro ao atualizar margem bruta');
-  return res.json();
+  }));
+  return checkJsonResponse(resObj);
 }
 
+/* Produto novo a criar,
+Dados para enviar,
+POST para gravar,
+Novo item a brilhar. */
 export async function criarProduto(produto) {
-  const res = await fetch(`${API_BASE}/produto`, {
+  const url = `${API_BASE}/produto`;
+  console.log('POST:', url, 'Body:', produto);
+  const resObj = await logResponse(await fetch(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...NGROK_HEADERS
+    },
     body: JSON.stringify(produto),
-  });
-  if (!res.ok) throw new Error('Erro ao criar produto');
-  return res.json();
+  }));
+  return checkJsonResponse(resObj);
 }
-
-
-
-
-
-
