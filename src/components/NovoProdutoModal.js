@@ -15,11 +15,12 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     subfamilia: null,
   });
 
+const API_BASE = process.env.REACT_APP_API_URL;
 
-const optionsSubfamilias = (subfamilias || []).filter(sf => {
+  const optionsSubfamilias = (subfamilias || []).filter(sf => {
 
-  return String(sf.familia) === String(novoProduto.familia?.value);
-}).map(sf => ({ value: sf.codigo, label: sf.descricao }));
+    return String(sf.familia) === String(novoProduto.familia?.value);
+  }).map(sf => ({ value: sf.codigo, label: sf.descricao }));
 
 
 
@@ -89,7 +90,7 @@ const optionsSubfamilias = (subfamilias || []).filter(sf => {
     }
 
     try {
-      const response = await fetch(`http://localhost:3001/produto/${codigo}`);
+      const response = await fetch(`${API_BASE}/produto/${codigo}`);
       if (response.ok) {
         const produtoExistente = await response.json();
         setProdutoJaExiste(true);
@@ -120,7 +121,7 @@ const optionsSubfamilias = (subfamilias || []).filter(sf => {
       ...novoProduto,
       fornecedor: novoProduto.fornecedor.value,
       familia: novoProduto.familia?.value ?? null,
-       subfam: novoProduto.subfamilia?.value ?? null,
+      subfam: novoProduto.subfamilia?.value ?? null,
     });
   }
 
@@ -303,12 +304,17 @@ const optionsSubfamilias = (subfamilias || []).filter(sf => {
             <Select
               options={optionsFamilias}
               value={novoProduto.familia}
-              onChange={selected => setNovoProduto(prev => ({ ...prev, familia: selected }))}
+              onChange={selected => setNovoProduto(prev => ({
+                ...prev,
+                familia: selected,
+                subfamilia: null 
+              }))}
               placeholder="Seleciona uma família..."
               isClearable
               isSearchable
               classNamePrefix="react-select"
             />
+
           </div>
 
           <div className="mb-3">

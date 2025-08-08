@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3001';
+const API_BASE = process.env.REACT_APP_API_URL;
 
 export async function fetchFornecedores() {
   const res = await fetch(`${API_BASE}/fornecedores`);
@@ -7,10 +7,17 @@ export async function fetchFornecedores() {
 }
 
 export async function fetchFamilias() {
-  const response = await fetch('http://localhost:3001/familias');
+  const response = await fetch(`${API_BASE}/familias`);
   if (!response.ok) throw new Error('Erro ao buscar famílias');
   return await response.json();
 }
+
+export async function fetchSubfamilias() {
+  const res = await fetch(`${API_BASE}/subfamilias`);
+  if (!res.ok) throw new Error('Erro ao buscar subfamílias');
+  return res.json();
+}
+
 
 export async function fetchProdutoPorCodigo(codigo, fornecedorId) {
   const res = await fetch(`${API_BASE}/produto/${codigo}?fornecedor=${fornecedorId}`);
