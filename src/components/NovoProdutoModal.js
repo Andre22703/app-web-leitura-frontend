@@ -15,6 +15,9 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     subfamilia: null,
   });
 
+const NGROK_HEADERS = {
+  'ngrok-skip-browser-warning': 'true'
+};
 const API_BASE = process.env.REACT_APP_API_URL;
 
   const optionsSubfamilias = (subfamilias || []).filter(sf => {
@@ -90,7 +93,11 @@ const API_BASE = process.env.REACT_APP_API_URL;
     }
 
     try {
-      const response = await fetch(`${API_BASE}/produto/${codigo}`);
+      const response = await fetch(`${API_BASE}/produto/${codigo}`, {
+      headers: {
+        ...NGROK_HEADERS,
+      }
+    });
       if (response.ok) {
         const produtoExistente = await response.json();
         setProdutoJaExiste(true);
