@@ -11,7 +11,10 @@ export default function ProdutoRow({
 }) {
   const margem = Number(produto.margembruta);
   const precoCompra = Number(produto.precocompra);
-const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
+
+  // Stock total = base + alterações pendentes
+  const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
+
   const precoVenda =
     !isNaN(margem) && !isNaN(precoCompra)
       ? (precoCompra * (1 + margem / 100)).toFixed(2) + '€'
@@ -29,9 +32,15 @@ const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarra
         {!isNaN(margem) ? `${margem}%` : 'N/D'}
       </td>
 
+      {/* Nova coluna: stock original da base */}
+      <td style={{ textAlign: 'center' }}>
+        {produto.qtdstock}
+      </td>
+
+      {/* Coluna existente: stock total (base + pendente) */}
       <td
         className="text-primary fw-bold"
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: 'pointer', textAlign: 'center' }}
         onClick={() => onAbrirStock(produto)}
       >
         {stockTotal}
@@ -47,7 +56,6 @@ const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarra
 
       <td>{precoVenda}</td>
 
-    
       <td style={{ textAlign: 'center' }}>
         <button
           type="button"

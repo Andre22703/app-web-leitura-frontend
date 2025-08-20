@@ -1,13 +1,13 @@
 import React from 'react';
 import ProdutoRow from './ProdutoRow';
 
-export default function ProdutoTable({ 
-  produtos, 
-  alteracoesPendentesStock = {}, 
-  onAbrirStock, 
-  onAbrirPrecoCompra, 
-  onAbrirMargem, 
-  onApagarProduto, 
+export default function ProdutoTable({
+  produtos,
+  alteracoesPendentesStock = {},
+  onAbrirStock,
+  onAbrirPrecoCompra,
+  onAbrirMargem,
+  onApagarProduto,
   onPedirConfirmacaoApagar
 }) {
 
@@ -19,6 +19,7 @@ export default function ProdutoTable({
             <th style={{ minWidth: '200px' }}>Descrição</th>
             <th style={{ minWidth: '150px' }}>Cod. de Barras</th>
             <th style={{ minWidth: '150px', textAlign: 'center' }}>Margem Bruta (%)</th>
+            <th style={{ minWidth: '120px', textAlign: 'center' }}>Stock Base</th>
             <th style={{ minWidth: '120px', textAlign: 'center' }}>Qtd. Stock</th>
             <th style={{ minWidth: '120px', textAlign: 'center' }}>Preço Compra</th>
             <th style={{ minWidth: '120px', textAlign: 'center' }}>Preço Venda</th>
