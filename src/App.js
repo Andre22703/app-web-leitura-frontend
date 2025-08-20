@@ -201,11 +201,17 @@ function confirmarAdicaoComStock() {
     setAlerta({ tipo: 'erro', mensagem: 'Insira uma quantidade de stock maior que zero.' });
     return;
   }
+
   if (produtoParaConfirmar) {
 
-    setProdutos(prev => [...prev, produtoParaConfirmar]);
+    // Adiciona o produto apenas se ainda não estiver na lista
+    setProdutos(prev => {
+      const exists = prev.find(p => p.codbarras === produtoParaConfirmar.codbarras);
+      if (exists) return prev; // já existe, não adiciona de novo
+      return [...prev, produtoParaConfirmar];
+    });
 
-
+    // Atualiza apenas o stock pendente
     setAlteracoesPendentes(prev => ({
       ...prev,
       stock: {
@@ -219,6 +225,7 @@ function confirmarAdicaoComStock() {
     setQuantidadeStock(0);
   }
 }
+
 
 
 function cancelarAdicao() {
