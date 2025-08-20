@@ -35,10 +35,11 @@ export default function ProdutoRow({
       <td
         className="text-primary fw-bold"
         style={{ cursor: 'pointer', textAlign: 'center' }}
-        onClick={() => onAbrirStock(produto)}
+        onClick={() => onAbrirStock({ ...produto, stockTotal })}
       >
-        {produto.qtdstock} → {stockTotal}
+        ({produto.qtdstock}) → {stockTotal}
       </td>
+
 
       <td
         className="text-primary fw-bold"
