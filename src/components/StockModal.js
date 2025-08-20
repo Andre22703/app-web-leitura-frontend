@@ -4,12 +4,10 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
   const [quantidade, setQuantidade] = useState(0);
 
   useEffect(() => {
-    // Inicializa com o valor que está na tabela (base + alterações pendentes)
-    setQuantidade(produto?.qtdstockTabela || 0); // qtdstockTabela é o valor que mostras na tabela
-  }, [produto]);
-  useEffect(() => {
-  setQuantidade(produto?.stockTotal || 0); // stock total da tabela (base + pendente)
+  // Inicializa com o stock que está na tabela (base + pendente)
+  setQuantidade(produto?.stockTotal || 0);
 }, [produto]);
+
 
   function aumentar() {
     setQuantidade(q => q + 1);
