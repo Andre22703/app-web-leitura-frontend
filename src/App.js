@@ -490,67 +490,77 @@ return (
     )}
 
     {produtoParaConfirmar && (
-  <div
-    className="modal show d-block"
-    tabIndex="-1"
-    role="dialog"
-    aria-modal="true"
-    style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-  >
-    <div className="modal-dialog modal-dialog-centered" role="document">
-      <div className="modal-content text-start">
-        <div className="modal-header">
-          <h5 className="modal-title">Confirmar Adição</h5>
-          <button type="button" className="btn-close" onClick={cancelarAdicao} disabled={enviando}></button>
-        </div>
-        <div className="modal-body">
-          <p><strong>Descrição:</strong> {produtoParaConfirmar.descricao}</p>
-          <p><strong>Código de Barras:</strong> {produtoParaConfirmar.codbarras}</p>
+      <div
+        className="modal show d-block"
+        tabIndex="-1"
+        role="dialog"
+        aria-modal="true"
+        style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+      >
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content text-start">
+            <div className="modal-header">
+              <h5 className="modal-title">Confirmar Adição</h5>
+              <button type="button" className="btn-close" onClick={cancelarAdicao} disabled={enviando}></button>
+            </div>
+            <div className="modal-body">
+              <p>
+                <strong>Descrição:</strong> {produtoParaConfirmar.descricao}
+              </p>
 
-          <label htmlFor="quantidadeInput" className="form-label mt-3">
-            <strong>Quantidade de Stock:</strong>
-          </label>
-          <div className="d-flex align-items-center gap-2">
-            <button
-              className="btn btn-outline-danger"
-              onClick={() => setQuantidadeStock(q => Math.max(q - 1, 0))}
-              disabled={quantidadeStock <= 0}
-            >-</button>
-            <input
-              type="number"
-              id="quantidadeInput"
-              className="form-control text-center"
-              value={quantidadeStock}
-              onChange={e => {
-                const val = Number(e.target.value);
-                if (!isNaN(val) && val >= 0) setQuantidadeStock(val);
-              }}
-              min={0}
-            />
-            <button
-              className="btn btn-outline-success"
-              onClick={() => setQuantidadeStock(q => q + 1)}
-            >+</button>
+              <strong>Código de Barras:</strong> {produtoParaConfirmar.codbarras}
+
+              <label htmlFor="quantidadeInput" className="form-label mt-3"><strong>Quantidade de Stock:</strong></label>
+              <div className="d-flex align-items-center gap-2">
+                <button
+                  className="btn btn-outline-danger"
+                  onClick={() => setQuantidadeStock(q => (q > 0 ? q - 1 : 0))}
+                  disabled={quantidadeStock <= 0}
+                >
+                  -
+                </button>
+                <input
+                  type="number"
+                  id="quantidadeInput"
+                  className="form-control text-center"
+                  value={quantidadeStock}
+                  onChange={e => {
+                    const val = Number(e.target.value);
+                    if (!isNaN(val) && val >= 0) setQuantidadeStock(val);
+                  }}
+                  min={0}
+
+                />
+                <button
+                  className="btn btn-outline-success"
+                  onClick={() => setQuantidadeStock(q => q + 1)}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={cancelarAdicao}
+                disabled={enviando}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => confirmarAdicaoComStock()}
+                disabled={enviando}
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         </div>
-        <div className="modal-footer">
-          <button type="button" className="btn btn-secondary" onClick={cancelarAdicao} disabled={enviando}>Cancelar</button>
-          <button type="button" className="btn btn-primary" onClick={() => {
-            // Atualiza stock na tabela sem API
-            setAlteracoesPendentes(prev => ({
-              ...prev,
-              [produtoParaConfirmar.codbarras]: (prev[produtoParaConfirmar.codbarras] || 0) + quantidadeStock
-            }));
-            cancelarAdicao();
-          }} disabled={enviando}>
-            Confirmar
-          </button>
-        </div>
       </div>
-    </div>
-  </div>
-)}
-
+    )}
 
 
 
