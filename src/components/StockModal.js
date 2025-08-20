@@ -41,7 +41,7 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
           </div>
           <div className="modal-body">
             <p><strong>{produto.descricao}</strong></p>
-            <small className="text-muted">Stock atual: {produto?.qtdstock}</small>
+            <small className="text-muted">Stock sem atualização: {produto?.qtdstock}</small>
             <div className="d-flex align-items-center gap-2">
               <button className="btn btn-outline-danger" onClick={diminuir} disabled={quantidade <= 0}>-</button>
               <input
