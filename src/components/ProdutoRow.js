@@ -33,7 +33,7 @@ export default function ProdutoRow({
         style={{ cursor: 'pointer' }}
         onClick={() => onAbrirStock(produto)}
       >
-        {produto.qtdstock} + 1
+        {produto.qtdstock} + 
       </td>
 
       <td
