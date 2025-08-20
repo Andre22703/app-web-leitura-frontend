@@ -13,7 +13,7 @@ export default function ProdutoRow({
   const precoCompra = Number(produto.precocompra);
 
   // Stock total = base + alterações pendentes
-  const stockAtual = alteracoesPendentesStock[produto.codbarras] ?? produto.qtdstock;
+  const stockTotal = alteracoesPendentesStock[produto.codbarras] ?? produto.qtdstock;
 
 
   const precoVenda =
