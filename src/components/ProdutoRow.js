@@ -6,7 +6,7 @@ export default function ProdutoRow({
   onAbrirStock,
   onAbrirPrecoCompra,
   onAbrirMargem,
-  onApagarProduto, 
+  onApagarProduto,
   onPedirConfirmacaoApagar
 }) {
   const margem = Number(produto.margembruta);
@@ -32,14 +32,15 @@ export default function ProdutoRow({
         {!isNaN(margem) ? `${margem}%` : 'N/D'}
       </td>
 
-      {/* Coluna existente: stock total (base + pendente) */}
       <td
         className="text-primary fw-bold"
         style={{ cursor: 'pointer', textAlign: 'center' }}
         onClick={() => onAbrirStock(produto)}
       >
         {stockTotal}
-        {produto.qtdstock}
+        <div>
+          <small>({produto.qtdstock})</small>
+        </div>
       </td>
 
       <td
