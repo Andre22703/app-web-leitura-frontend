@@ -4,8 +4,8 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
   const [quantidade, setQuantidade] = useState(0);
 
   useEffect(() => {
-    // Inicializa com o stock real da base de dados, sem alterações pendentes
-    setQuantidade(produto?.qtdstock || 0);
+    // Inicializa com o valor que está na tabela (base + alterações pendentes)
+    setQuantidade(produto?.qtdstockTabela || 0); // qtdstockTabela é o valor que mostras na tabela
   }, [produto]);
 
   function aumentar() {
@@ -21,8 +21,8 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
       alert('Insira uma quantidade válida.');
       return;
     }
-    // Passa apenas a quantidade a adicionar
-    const quantidadeAdd = quantidade - (produto?.qtdstock || 0);
+    // Passa a diferença entre o que está na tabela e o que foi alterado no modal
+    const quantidadeAdd = quantidade - (produto?.qtdstockTabela || 0);
     onConfirmar(produto.codbarras, quantidadeAdd);
   }
 
@@ -55,7 +55,6 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
               />
               <button className="btn btn-outline-success" onClick={aumentar}>+</button>
             </div>
-            <small className="text-muted">Stock atual: {produto?.qtdstock}</small>
           </div>
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onFechar}>Cancelar</button>
