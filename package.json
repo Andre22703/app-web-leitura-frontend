@@ -2,7 +2,7 @@
   "name": "app-web-leitura",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/app-web-leitura",
+  "homepage": ".",
   "_comentario": "Adicionado para funcionar no site ednas",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
