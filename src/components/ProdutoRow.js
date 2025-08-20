@@ -2,6 +2,7 @@ import React from 'react';
 
 export default function ProdutoRow({
   produto,
+  alteracoesPendentesStock = {},
   onAbrirStock,
   onAbrirPrecoCompra,
   onAbrirMargem,
@@ -10,7 +11,7 @@ export default function ProdutoRow({
 }) {
   const margem = Number(produto.margembruta);
   const precoCompra = Number(produto.precocompra);
-
+const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
   const precoVenda =
     !isNaN(margem) && !isNaN(precoCompra)
       ? (precoCompra * (1 + margem / 100)).toFixed(2) + '€'
@@ -33,7 +34,7 @@ export default function ProdutoRow({
         style={{ cursor: 'pointer' }}
         onClick={() => onAbrirStock(produto)}
       >
-        {produto.qtdstock} + {alteracoesPendentesStock}
+        {stockTotal}
       </td>
 
       <td
