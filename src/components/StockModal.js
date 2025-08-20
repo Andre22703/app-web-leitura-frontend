@@ -17,15 +17,15 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
     setQuantidade(q => (q > 0 ? q - 1 : 0));
   }
 
-  function confirmar() {
-    if (quantidade < 0) {
-      alert('Insira uma quantidade válida.');
-      return;
-    }
-    // Passa a diferença entre o que está na tabela e o que foi alterado no modal
-    const quantidadeAdd = quantidade - (produto?.qtdstockTabela || 0);
-    onConfirmar(produto.codbarras, quantidadeAdd);
+ function confirmar() {
+  if (quantidade < 0) {
+    alert('Insira uma quantidade válida.');
+    return;
   }
+  // Passa o valor exato do stock, substituindo o antigo
+  onConfirmar(produto.codbarras, quantidade);
+}
+
 
   return (
     <div
