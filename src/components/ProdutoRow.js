@@ -13,7 +13,8 @@ export default function ProdutoRow({
   const precoCompra = Number(produto.precocompra);
 
   // Stock total = base + alterações pendentes
-  const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
+  const stockAtual = alteracoesPendentesStock[produto.codbarras] ?? produto.qtdstock;
+
 
   const precoVenda =
     !isNaN(margem) && !isNaN(precoCompra)
