@@ -174,9 +174,6 @@ const [subfamilias, setSubfamilias] = useState([]);
 
 
 
-useEffect(() => {
-  setQuantidade(produto?.stockTotal || 0);
-}, [produto]);
 
 
 

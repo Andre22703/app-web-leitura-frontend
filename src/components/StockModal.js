@@ -7,6 +7,9 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
     // Inicializa com o valor que está na tabela (base + alterações pendentes)
     setQuantidade(produto?.qtdstockTabela || 0); // qtdstockTabela é o valor que mostras na tabela
   }, [produto]);
+  useEffect(() => {
+  setQuantidade(produto?.stockTotal || 0); // stock total da tabela (base + pendente)
+}, [produto]);
 
   function aumentar() {
     setQuantidade(q => q + 1);
@@ -41,7 +44,6 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
           </div>
           <div className="modal-body">
             <p><strong>{produto.descricao}</strong></p>
-            <small className="text-muted">Stock sem atualização: {produto?.qtdstock}</small>
             <div className="d-flex align-items-center gap-2">
               <button className="btn btn-outline-danger" onClick={diminuir} disabled={quantidade <= 0}>-</button>
               <input
