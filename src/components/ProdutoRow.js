@@ -11,10 +11,7 @@ export default function ProdutoRow({
 }) {
   const margem = Number(produto.margembruta);
   const precoCompra = Number(produto.precocompra);
-const stockTotal = alteracoesPendentesStock[produto.codbarras] !== undefined
-  ? produto.qtdstock + alteracoesPendentesStock[produto.codbarras]
-  : produto.qtdstock;
-
+const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
   const precoVenda =
     !isNaN(margem) && !isNaN(precoCompra)
       ? (precoCompra * (1 + margem / 100)).toFixed(2) + '€'
