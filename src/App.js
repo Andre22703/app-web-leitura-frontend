@@ -232,19 +232,19 @@ function cancelarAdicao() {
   setProdutoParaConfirmar(null);
 }
 
-function handleAtualizarStockLocal(codbarras, quantidadeAdd) {
-  // não mexe em produto.qtdstock aqui!
+function handleAtualizarStockLocal(codbarras, novoStock) {
   setAlteracoesPendentes(prev => ({
     ...prev,
     stock: {
       ...prev.stock,
-      [codbarras]: (prev.stock[codbarras] || 0) + Number(quantidadeAdd),
+      [codbarras]: Number(novoStock), // substitui o valor antigo
     },
   }));
 
   setProdutoParaStock(null);
   setAlerta({ tipo: 'info', mensagem: 'Alteração de stock guardada localmente' });
 }
+
 
 
 

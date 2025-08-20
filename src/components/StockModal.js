@@ -17,7 +17,7 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
     setQuantidade(q => (q > 0 ? q - 1 : 0));
   }
 
- function confirmar() {
+function confirmar() {
   if (quantidade < 0) {
     alert('Insira uma quantidade válida.');
     return;
@@ -25,6 +25,7 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
   // Passa o valor exato do stock, substituindo o antigo
   onConfirmar(produto.codbarras, quantidade);
 }
+
 
 
   return (
