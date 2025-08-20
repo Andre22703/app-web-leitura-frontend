@@ -49,9 +49,10 @@ export default function App() {
   const [apiBaseUrl, setApiBaseUrl] = useState(null);
   const [loadingApiUrl, setLoadingApiUrl] = useState(true);
 
-  const { fornecedores, loading, error } = useFornecedores();
-  const { familias } = useFamilias();
-  const { subfamilias } = useSubfamilias();
+  const [fornecedores, setFornecedores] = useState([]);
+const [familias, setFamilias] = useState([]);
+const [subfamilias, setSubfamilias] = useState([]);
+
 
   const [mostrarModalNovoProduto, setMostrarModalNovoProduto] = useState(false);
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState('');
@@ -77,6 +78,8 @@ export default function App() {
   const [enviando, setEnviando] = useState(false);
 
    const [apiUrl, setApiUrl] = useState(null);
+
+   
 
 
 
@@ -120,19 +123,22 @@ export default function App() {
     apiModule.setApiBaseUrl(apiUrl); // define a URL no módulo
 
     const carregarDados = async () => {
-      try {
-        const fornecedores = await apiModule.fetchFornecedores();
-        console.log("Fornecedores:", fornecedores);
+  try {
+    const fornecedoresData = await apiModule.fetchFornecedores();
+    setFornecedores(fornecedoresData);
+    console.log("Fornecedores:", fornecedoresData);
 
-        const familias = await apiModule.fetchFamilias();
-        console.log("Familias:", familias);
+    const familiasData = await apiModule.fetchFamilias();
+    setFamilias(familiasData);
+    console.log("Familias:", familiasData);
 
-        const subfamilias = await apiModule.fetchSubfamilias();
-        console.log("Subfamilias:", subfamilias);
-      } catch (err) {
-        console.error("Erro ao carregar dados da API:", err);
-      }
-    };
+    const subfamiliasData = await apiModule.fetchSubfamilias();
+    setSubfamilias(subfamiliasData);
+    console.log("Subfamilias:", subfamiliasData);
+  } catch (err) {
+    console.error("Erro ao carregar dados da API:", err);
+  }
+};
 
     carregarDados();
   });
@@ -371,14 +377,15 @@ return (
     )}
 
     <FornecedorSelect
-      fornecedores={fornecedores}
-      fornecedorSelecionado={fornecedorSelecionado}
-      setFornecedorSelecionado={value => {
-        setFornecedorSelecionado(value);
-        setAlerta(null);
-      }}
-      disabled={enviando}
-    />
+  fornecedores={fornecedores}
+  fornecedorSelecionado={fornecedorSelecionado}
+  setFornecedorSelecionado={value => {
+    setFornecedorSelecionado(value);
+    setAlerta(null);
+  }}
+  disabled={enviando}
+/>
+
 
     {fornecedorSelecionado && (
       <>
