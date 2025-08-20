@@ -1,4 +1,8 @@
-const API_BASE = process.env.REACT_APP_API_URL;
+let API_BASE = "";
+
+export function setApiBaseUrl(url) {
+  API_BASE = url;
+}
 
 // Header para evitar a página de aviso do ngrok
 const NGROK_HEADERS = {
@@ -79,6 +83,7 @@ Se não pertencer, lança-se o torpor,
 Se não existir, erro com vigor,
 Se JSON chegar, é puro amor. */
 export async function fetchProdutoPorCodigo(codigo, fornecedorId) {
+  
   const url = `${API_BASE}/produto/${codigo}?fornecedor=${fornecedorId}`;
   console.log('Fetching:', url);
   const resObj = await logResponse(await fetch(url, {
