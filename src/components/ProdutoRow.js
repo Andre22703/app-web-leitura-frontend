@@ -33,9 +33,7 @@ export default function ProdutoRow({
         style={{ cursor: 'pointer' }}
         onClick={() => onAbrirStock(produto)}
       >
-    
-  {produto.qtdstock + (alteracoesPendentes[produto.codbarras] || 0)}
-
+        {produto.qtdstock}
       </td>
 
       <td

@@ -1,64 +1,45 @@
 import React from 'react';
+import ProdutoRow from './ProdutoRow';
 
-export default function ProdutoRow({
-  produto,
-  alteracoesPendentesStock = {},
-  onAbrirStock,
-  onAbrirPrecoCompra,
-  onAbrirMargem,
+export default function ProdutoTable({ 
+  produtos, 
+  alteracoesPendentesStock = {}, 
+  onAbrirStock, 
+  onAbrirPrecoCompra, 
+  onAbrirMargem, 
   onApagarProduto, 
   onPedirConfirmacaoApagar
 }) {
-  const margem = Number(produto.margembruta);
-  const precoCompra = Number(produto.precocompra);
-
-  const precoVenda =
-    !isNaN(margem) && !isNaN(precoCompra)
-      ? (precoCompra * (1 + margem / 100)).toFixed(2) + '€'
-      : '-';
-
-  const stockTotal = produto.qtdstock + (alteracoesPendentesStock[produto.codbarras] || 0);
 
   return (
-    <tr>
-      <td>{produto.descricao}</td>
-      <td>{produto.codbarras}</td>
-      <td
-        className="text-primary fw-bold"
-        style={{ cursor: 'pointer', textAlign: 'center' }}
-        onClick={() => onAbrirMargem(produto)}
-      >
-        {!isNaN(margem) ? `${margem}%` : 'N/D'}
-      </td>
-
-      <td
-        className="text-primary fw-bold"
-        style={{ cursor: 'pointer', textAlign: 'center' }}
-        onClick={() => onAbrirStock(produto)}
-      >
-        {stockTotal} +
-      </td>
-
-      <td
-        className="text-primary fw-bold"
-        style={{ cursor: 'pointer', textAlign: 'center' }}
-        onClick={() => onAbrirPrecoCompra(produto)}
-      >
-        {!isNaN(precoCompra) ? precoCompra.toFixed(2) + '€' : 'N/D'}
-      </td>
-
-      <td style={{ textAlign: 'center' }}>{precoVenda}</td>
-
-      <td style={{ textAlign: 'center' }}>
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-danger"
-          title="Apagar produto"
-          onClick={() => onPedirConfirmacaoApagar(produto)}
-        >
-          <i className="bi bi-trash"></i>
-        </button>
-      </td>
-    </tr>
+    <div className="table-responsive">
+      <table className="table table-striped table-bordered align-middle">
+        <thead className="table-light">
+          <tr>
+            <th style={{ minWidth: '200px' }}>Descrição</th>
+            <th style={{ minWidth: '150px' }}>Cod. de Barras</th>
+            <th style={{ minWidth: '150px', textAlign: 'center' }}>Margem Bruta (%)</th>
+            <th style={{ minWidth: '120px', textAlign: 'center' }}>Qtd. Stock</th>
+            <th style={{ minWidth: '120px', textAlign: 'center' }}>Preço Compra</th>
+            <th style={{ minWidth: '120px', textAlign: 'center' }}>Preço Venda</th>
+            <th style={{ minWidth: '80px', textAlign: 'center' }}>Apagar</th>
+          </tr>
+        </thead>
+        <tbody>
+          {produtos.map(produto => (
+            <ProdutoRow
+              key={produto.codbarras}
+              produto={produto}
+              alteracoesPendentesStock={alteracoesPendentesStock}
+              onAbrirStock={onAbrirStock}
+              onAbrirPrecoCompra={onAbrirPrecoCompra}
+              onAbrirMargem={onAbrirMargem}
+              onApagarProduto={onApagarProduto}
+              onPedirConfirmacaoApagar={onPedirConfirmacaoApagar}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
