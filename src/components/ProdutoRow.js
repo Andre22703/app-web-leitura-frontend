@@ -32,11 +32,6 @@ export default function ProdutoRow({
         {!isNaN(margem) ? `${margem}%` : 'N/D'}
       </td>
 
-      {/* Nova coluna: stock original da base */}
-      <td style={{ textAlign: 'center' }}>
-        {produto.qtdstock}
-      </td>
-
       {/* Coluna existente: stock total (base + pendente) */}
       <td
         className="text-primary fw-bold"
@@ -44,6 +39,7 @@ export default function ProdutoRow({
         onClick={() => onAbrirStock(produto)}
       >
         {stockTotal}
+        {produto.qtdstock}
       </td>
 
       <td
