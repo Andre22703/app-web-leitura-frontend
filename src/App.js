@@ -233,13 +233,7 @@ function cancelarAdicao() {
 }
 
 function handleAtualizarStockLocal(codbarras, quantidadeAdd) {
-  setProdutos(prev =>
-    prev.map(p =>
-      p.codbarras === codbarras
-        ? { ...p, qtdstock: Number(p.qtdstock || 0) + Number(quantidadeAdd) }
-        : p
-    )
-  );
+  // não mexe em produto.qtdstock aqui!
   setAlteracoesPendentes(prev => ({
     ...prev,
     stock: {
@@ -247,9 +241,11 @@ function handleAtualizarStockLocal(codbarras, quantidadeAdd) {
       [codbarras]: (prev.stock[codbarras] || 0) + Number(quantidadeAdd),
     },
   }));
+
   setProdutoParaStock(null);
   setAlerta({ tipo: 'info', mensagem: 'Alteração de stock guardada localmente' });
 }
+
 
 
 function handleAtualizarPrecoCompraLocal(codbarras, novoPrecoCompra) {
