@@ -1,58 +1,47 @@
-// updateNgrokAndStartReact.js
 const fs = require('fs');
 const path = require('path');
-const fetch = require('node-fetch'); // npm install node-fetch@2
-const { exec } = require('child_process');
+const fetch = require('node-fetch');
 
 const BIN_ID = "68a2e0a5d0ea881f405c44d8";
 const API_KEY = "$2a$10$RKrrtUJtw.UpRgJQAwsUyOElRGt4k7eDAUxluSs2g2cSmwhx1UIhW";
-const ENV_PATH = path.resolve(__dirname, '.env.local'); // caminho para o .env do React
+
+const LOJA_ID = "Mimos"; // alterar conforme a loja
+const ENV_PATH = path.resolve(__dirname, '.env.local');
 
 async function updateNgrok() {
   try {
-    console.log("🔹 Buscando URL do ngrok na API local...");
     const res = await fetch("http://localhost:3001/ngrok-url");
     const data = await res.json();
-    console.log("✅ Resposta da API local:", data);
-
     const ngrokUrl = data.url;
-    if (!ngrokUrl) throw new Error("Nenhum URL do ngrok encontrado na resposta da API local.");
-    console.log("🔹 Ngrok URL atual:", ngrokUrl);
+    if (!ngrokUrl) throw new Error("Nenhum URL do ngrok encontrado.");
+    console.log("🔹 Ngrok URL:", ngrokUrl);
 
-    console.log("🔹 Atualizando JSONBin...");
+    // 1️⃣ Buscar conteúdo atual do JSONBin
+    const getRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
+      headers: { "X-Master-Key": API_KEY }
+    });
+    const binData = await getRes.json();
+    const lojas = binData.record.lojas || {};
+
+    // 2️⃣ Atualizar apenas a loja atual
+    lojas[LOJA_ID] = ngrokUrl;
+
+    // 3️⃣ Atualizar JSONBin
     const updateRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": API_KEY
-      },
-      body: JSON.stringify({ ngrok: ngrokUrl })
+      headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
+      body: JSON.stringify({ lojas })
     });
-    const updateResult = await updateRes.json();
-    console.log("✅ JSONBin atualizado:", updateResult);
+    console.log("✅ JSONBin atualizado:", await updateRes.json());
 
-    console.log("🔹 Atualizando arquivo .env.local...");
-    let envContent = '';
-    if (fs.existsSync(ENV_PATH)) {
-      envContent = fs.readFileSync(ENV_PATH, 'utf-8');
-    }
-
+    // 4️⃣ Atualizar .env.local se quiser (opcional)
+    let envContent = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
     const envLine = `REACT_APP_API_URL=${ngrokUrl}`;
-    if (envContent.includes('REACT_APP_API_URL=')) {
-      envContent = envContent.replace(/REACT_APP_API_URL=.*/g, envLine);
-    } else {
-      envContent += `\n${envLine}\n`;
-    }
-
+    envContent = envContent.includes('REACT_APP_API_URL=') ?
+      envContent.replace(/REACT_APP_API_URL=.*/g, envLine) :
+      envContent + `\n${envLine}\n`;
     fs.writeFileSync(ENV_PATH, envContent, 'utf-8');
-    console.log("✅ .env.local atualizado com sucesso:", envLine);
-
-    console.log("🎉 Iniciando React app...");
-    const reactProcess = exec('npm start', { cwd: __dirname });
-
-    reactProcess.stdout.on('data', data => console.log(data));
-    reactProcess.stderr.on('data', data => console.error(data));
-    reactProcess.on('close', code => console.log(`React app encerrado com código ${code}`));
+    console.log("✅ .env.local atualizado:", envLine);
 
   } catch (err) {
     console.error("❌ Erro ao atualizar ngrok:", err);

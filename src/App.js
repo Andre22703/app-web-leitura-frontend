@@ -22,7 +22,7 @@ import ConfirmarEnviarModal from './components/ConfirmarEnviarModal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { setApiBaseUrl, fetchFornecedores, fetchFamilias, fetchSubfamilias } from "./services/api";
-
+import * as apiModule from "./services/api";
 function useStickyState(defaultValue, key) {
   const [value, setValue] = useState(() => {
     try {
@@ -78,9 +78,70 @@ const [subfamilias, setSubfamilias] = useState([]);
   const [enviando, setEnviando] = useState(false);
 
    const [apiUrl, setApiUrl] = useState(null);
+  
+
+   const [mostrarModalToken, setMostrarModalToken] = useState(true);
+   const [tokenLoja, setTokenLoja] = useState("");
+   const [lojasJson, setLojasJson] = useState(null);
+   const [lojaSelecionada, setLojaSelecionada] = useState(null);
 
    
+useEffect(() => {
+    const fetchLojas = async () => {
+      try {
+        const res = await fetch(
+          "https://api.jsonbin.io/v3/b/68a2e0a5d0ea881f405c44d8",
+          {
+            headers: {
+              "X-Master-Key":
+                "$2a$10$RKrrtUJtw.UpRgJQAwsUyOElRGt4k7eDAUxluSs2g2cSmwhx1UIhW",
+            },
+          }
+        );
+        const data = await res.json();
+        setLojasJson(data.record);
+      } catch (err) {
+        console.error("Erro ao buscar JSON das lojas:", err);
+      }
+    };
+    fetchLojas();
+  }, []);
 
+  // Validar token da loja
+  function validarToken() {
+    if (!lojasJson) return;
+
+    const loja = Object.entries(lojasJson.lojas).find(
+      ([_, info]) => info.token === tokenLoja
+    );
+
+    if (loja) {
+      setLojaSelecionada(loja[0]);
+      setMostrarModalToken(false);
+    } else {
+      alert("Token inválido!");
+    }
+  }
+
+  // Configurar API ao selecionar loja
+  useEffect(() => {
+    if (!lojaSelecionada || !lojasJson) return;
+
+    const lojaData = lojasJson.lojas[lojaSelecionada];
+    if (lojaData && lojaData.url) {
+      
+      setApiUrl(lojaData.url);
+      apiModule.setApiBaseUrl(lojaData.url);
+      
+      
+      console.log(
+        `API URL definida para a loja '${lojaSelecionada}':`,
+        lojaData.url
+      );
+    } else {
+      console.warn(`URL da loja '${lojaSelecionada}' não encontrada.`);
+    }
+  }, [lojaSelecionada, lojasJson]);
 
 
   useEffect(() => {
@@ -360,7 +421,42 @@ async function enviarTodasAlteracoes() {
 
 
 return (
+  
   <div className="container my-4 p-4 bg-light rounded shadow text-center" style={{ minHeight: '100vh' }}>
+{mostrarModalToken && (
+        <div
+          className="modal d-block fade show"
+          tabIndex="-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content shadow-lg">
+              <div className="modal-header bg-primary text-white">
+                <h5 className="modal-title">Bem-vindo</h5>
+              </div>
+              <div className="modal-body">
+                <p>Insira o token da sua loja para continuar:</p>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Token"
+                  value={tokenLoja}
+                  onChange={(e) => setTokenLoja(e.target.value)}
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  className="btn btn-success w-100"
+                  onClick={validarToken}
+                >
+                  Confirmar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+  
     <h1 className="mb-4">Scanner Código de Barras</h1>
 
     <button
