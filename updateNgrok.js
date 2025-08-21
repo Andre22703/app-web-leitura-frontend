@@ -1,32 +1,39 @@
+require('dotenv').config({ path: require('path').resolve(__dirname, '.env.local') });
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
 
-const BIN_ID = "68a2e0a5d0ea881f405c44d8";
-const API_KEY = "$2a$10$RKrrtUJtw.UpRgJQAwsUyOElRGt4k7eDAUxluSs2g2cSmwhx1UIhW";
-
-const LOJA_ID = "Mimos"; // alterar conforme a loja
+const BIN_ID = process.env.JSONBIN_ID;
+const API_KEY = process.env.JSONBIN_API_KEY;
+const LOJA_ID = process.env.REACT_APP_LOJA_ID;
 const ENV_PATH = path.resolve(__dirname, '.env.local');
 
 async function updateNgrok() {
   try {
+    if (!LOJA_ID) throw new Error("❌ LOJA_ID não definido. Verifica o .env.local");
+
+    // Pegar URL do ngrok
     const res = await fetch("http://localhost:3001/ngrok-url");
     const data = await res.json();
     const ngrokUrl = data.url;
     if (!ngrokUrl) throw new Error("Nenhum URL do ngrok encontrado.");
     console.log("🔹 Ngrok URL:", ngrokUrl);
 
-    // 1️⃣ Buscar conteúdo atual do JSONBin
+    // Buscar conteúdo atual do JSONBin
     const getRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
       headers: { "X-Master-Key": API_KEY }
     });
     const binData = await getRes.json();
     const lojas = binData.record.lojas || {};
 
-    // 2️⃣ Atualizar apenas a loja atual
-    lojas[LOJA_ID] = ngrokUrl;
+    // Atualizar ou criar a loja
+    if (!lojas[LOJA_ID]) {
+      lojas[LOJA_ID] = { url: ngrokUrl, token: "" };
+    } else {
+      lojas[LOJA_ID] = { ...lojas[LOJA_ID], url: ngrokUrl };
+    }
 
-    // 3️⃣ Atualizar JSONBin
+    // Atualizar JSONBin
     const updateRes = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
@@ -34,7 +41,7 @@ async function updateNgrok() {
     });
     console.log("✅ JSONBin atualizado:", await updateRes.json());
 
-    // 4️⃣ Atualizar .env.local se quiser (opcional)
+    // Atualizar .env.local
     let envContent = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf-8') : '';
     const envLine = `REACT_APP_API_URL=${ngrokUrl}`;
     envContent = envContent.includes('REACT_APP_API_URL=') ?
