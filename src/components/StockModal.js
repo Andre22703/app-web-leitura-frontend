@@ -4,9 +4,9 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
   const [quantidade, setQuantidade] = useState(0);
 
   useEffect(() => {
-  // Inicializa com o stock que está na tabela (base + pendente)
-  setQuantidade(produto?.stockTotal || 0);
+  setQuantidade(Number(produto?.stockTotal) || 0);
 }, [produto]);
+
 
 
   function aumentar() {
@@ -17,14 +17,14 @@ export default function StockModal({ produto, onFechar, onConfirmar }) {
     setQuantidade(q => (q > 0 ? q - 1 : 0));
   }
 
-function confirmar() {
-  if (quantidade < 0) {
-    alert('Insira uma quantidade válida.');
-    return;
+  function confirmar() {
+    if (quantidade < 0) {
+      alert('Insira uma quantidade válida.');
+      return;
+    }
+    // Passa o valor exato do stock, substituindo o antigo
+    onConfirmar(produto.codbarras, quantidade);
   }
-  // Passa o valor exato do stock, substituindo o antigo
-  onConfirmar(produto.codbarras, quantidade);
-}
 
 
 
@@ -53,6 +53,7 @@ function confirmar() {
                   const val = Number(e.target.value);
                   if (!isNaN(val) && val >= 0) setQuantidade(val);
                 }}
+
                 min={0}
               />
               <button className="btn btn-outline-success" onClick={aumentar}>+</button>
