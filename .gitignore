@@ -11,6 +11,7 @@
 
 # backend folder to ignore
 /backend/
+updateNgrok.js
 
 # misc
 .DS_Store
