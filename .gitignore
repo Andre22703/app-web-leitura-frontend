@@ -12,7 +12,7 @@
 # backend folder to ignore
 /backend/
 updateNgrok.js
-
+correr.txt
 # misc
 .DS_Store
 .env.local

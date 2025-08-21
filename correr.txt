@@ -1,2 +1,0 @@
-node updateNgrok.js
-node server.js
