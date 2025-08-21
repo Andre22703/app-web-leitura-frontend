@@ -15,10 +15,10 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     subfamilia: null,
   });
 
-const NGROK_HEADERS = {
-  'ngrok-skip-browser-warning': 'true'
-};
-const API_BASE = process.env.REACT_APP_API_URL;
+  const NGROK_HEADERS = {
+    'ngrok-skip-browser-warning': 'true'
+  };
+  const API_BASE = process.env.REACT_APP_API_URL;
 
   const optionsSubfamilias = (subfamilias || []).filter(sf => {
 
@@ -38,8 +38,8 @@ const API_BASE = process.env.REACT_APP_API_URL;
     setNovoProduto(prev => ({ ...prev, [name]: value }));
 
     // Se for o campo codbarras, verifica também se já existe
-    if (name === 'codbarras') {
-      verificarProdutoExistente(value.trim());
+    if (name === 'codbarras' && novoProduto.fornecedor) {
+      verificarProdutoExistente(value.trim(), novoProduto.fornecedor.value);
     }
   }
 
@@ -86,18 +86,18 @@ const API_BASE = process.env.REACT_APP_API_URL;
   }, [scannerAberto]);
 
   async function verificarProdutoExistente(codigo) {
-    if (!codigo) {
+    if (!codigo || !novoProduto.fornecedor) {
       setProdutoJaExiste(false);
       setMensagemErro('');
       return;
     }
 
     try {
-      const response = await fetch(`${API_BASE}/produto/${codigo}`, {
-      headers: {
-        ...NGROK_HEADERS,
-      }
-    });
+      const response = await fetch(
+        `${API_BASE}/produto/${codigo}?fornecedor=${novoProduto.fornecedor.value}`,
+        { headers: { ...NGROK_HEADERS } }
+      );
+
       if (response.ok) {
         const produtoExistente = await response.json();
         setProdutoJaExiste(true);
@@ -112,6 +112,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
       setMensagemErro('');
     }
   }
+
 
   function handleSubmit() {
     if (!novoProduto.descricao || !novoProduto.codbarras || !novoProduto.fornecedor) {
@@ -314,7 +315,7 @@ const API_BASE = process.env.REACT_APP_API_URL;
               onChange={selected => setNovoProduto(prev => ({
                 ...prev,
                 familia: selected,
-                subfamilia: null 
+                subfamilia: null
               }))}
               placeholder="Seleciona uma família..."
               isClearable
