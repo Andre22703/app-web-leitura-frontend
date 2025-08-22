@@ -4,6 +4,9 @@ export function setApiBaseUrl(url) {
   API_BASE = url;
 }
 
+export function getApiBaseUrl() {
+  return API_BASE;
+}
 // Header para evitar a página de aviso do ngrok
 const NGROK_HEADERS = {
   'ngrok-skip-browser-warning': 'true'
