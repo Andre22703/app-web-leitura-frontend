@@ -93,32 +93,40 @@ const NGROK_HEADERS = {
   }, [scannerAberto]);
 
   async function verificarProdutoExistente(codigo) {
-    if (!codigo) {
-      setProdutoJaExiste(false);
-      setMensagemErro('');
+  if (!codigo) {
+    setProdutoJaExiste(false);
+    setMensagemErro('');
+    return;
+  }
+
+  try {
+    const baseUrl = getApiBaseUrl(); // 👈 pega sempre o valor atualizado
+    if (!baseUrl) {
+      console.warn("⚠️ API_BASE ainda não definido!");
       return;
     }
 
-    try {
-      const response = await fetch(`${apiUrl}/produto/${codigo}`, {
+    const response = await fetch(`${baseUrl}/produto/${codigo}`, {
       headers: {
         ...NGROK_HEADERS,
       }
     });
-      if (response.ok) {
-        const produtoExistente = await response.json();
-        setProdutoJaExiste(true);
-        setMensagemErro(`⚠️ Já existe: ${produtoExistente.descricao}`);
-      } else {
-        setProdutoJaExiste(false);
-        setMensagemErro('');
-      }
-    } catch (err) {
-      console.error("Erro ao verificar produto existente:", err);
+
+    if (response.ok) {
+      const produtoExistente = await response.json();
+      setProdutoJaExiste(true);
+      setMensagemErro(`⚠️ Já existe: ${produtoExistente.descricao}`);
+    } else {
       setProdutoJaExiste(false);
       setMensagemErro('');
     }
+  } catch (err) {
+    console.error("Erro ao verificar produto existente:", err);
+    setProdutoJaExiste(false);
+    setMensagemErro('');
   }
+}
+
 
   function handleSubmit() {
     if (!novoProduto.descricao || !novoProduto.codbarras || !novoProduto.fornecedor) {

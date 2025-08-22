@@ -1,9 +1,11 @@
 let API_BASE = "";
 
+// setter
 export function setApiBaseUrl(url) {
   API_BASE = url;
 }
 
+// getter
 export function getApiBaseUrl() {
   return API_BASE;
 }
@@ -11,6 +13,7 @@ export function getApiBaseUrl() {
 const NGROK_HEADERS = {
   'ngrok-skip-browser-warning': 'true'
 };
+
 
 // Escuto a resposta, seu som no ar,
 // Clono o texto para poder guardar.
@@ -85,13 +88,13 @@ export async function fetchSubfamilias() {
 Se não pertencer, lança-se o torpor,
 Se não existir, erro com vigor,
 Se JSON chegar, é puro amor. */
-import { getApiBaseUrl } from "./api";
+
 
 export async function fetchProdutoPorCodigo(codigo) {
-  const API_BASE = getApiBaseUrl();
-  console.log("🔗 A usar API_BASE:", API_BASE);
+  const baseUrl = getApiBaseUrl();
+  if (!baseUrl) throw new Error("API_BASE ainda não foi definido!");
 
-  const res = await fetch(`${API_BASE}/produto/${codigo}`, {
+  const res = await fetch(`${baseUrl}/produto/${codigo}`, {
     headers: { "ngrok-skip-browser-warning": "true" },
   });
 
