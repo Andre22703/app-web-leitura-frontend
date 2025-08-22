@@ -14,6 +14,7 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     fornecedor: null,
     familia: null,
     subfamilia: null,
+    apiUrl
   });
 
 const NGROK_HEADERS = {
@@ -96,7 +97,7 @@ const apiUrl = getApiBaseUrl();
     }
 
     try {
-      const response = await fetch(`${API_BASE}/produto/${codigo}`, {
+      const response = await fetch(`${apiUrl}/produto/${codigo}`, {
       headers: {
         ...NGROK_HEADERS,
       }
