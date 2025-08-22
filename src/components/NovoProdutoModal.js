@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Quagga from 'quagga';
 import Select from 'react-select';
-import { getApiBaseUrl } from "../services/api";
 
 export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, familias, subfamilias }) {
   const [novoProduto, setNovoProduto] = useState({
@@ -14,15 +13,12 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     fornecedor: null,
     familia: null,
     subfamilia: null,
-    apiUrl
   });
 
 const NGROK_HEADERS = {
   'ngrok-skip-browser-warning': 'true'
 };
-
-
-const apiUrl = getApiBaseUrl();
+const API_BASE = process.env.REACT_APP_API_URL;
 
   const optionsSubfamilias = (subfamilias || []).filter(sf => {
 
@@ -97,7 +93,7 @@ const apiUrl = getApiBaseUrl();
     }
 
     try {
-      const response = await fetch(`${apiUrl}/produto/${codigo}`, {
+      const response = await fetch(`${API_BASE}/produto/${codigo}`, {
       headers: {
         ...NGROK_HEADERS,
       }
