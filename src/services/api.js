@@ -85,23 +85,20 @@ export async function fetchSubfamilias() {
 Se não pertencer, lança-se o torpor,
 Se não existir, erro com vigor,
 Se JSON chegar, é puro amor. */
-export async function fetchProdutoPorCodigo(codigo, fornecedorId) {
-  
-  const url = `${API_BASE}/produto/${codigo}?fornecedor=${fornecedorId}`;
-  console.log('Fetching:', url);
-  const resObj = await logResponse(await fetch(url, {
-    headers: NGROK_HEADERS
-  }));
-  
-  if (!resObj.res.ok) {
-    if (resObj.res.status === 404) throw new Error('Produto não pertence ao fornecedor selecionado.');
-    throw new Error('Produto não encontrado');
-  }
-  if (!resObj.contentType.includes('application/json')) {
-    throw new Error(`Resposta inesperada da API (não é JSON): ${resObj.text.slice(0, 100)}`);
-  }
-  return JSON.parse(resObj.text);
+import { getApiBaseUrl } from "./api";
+
+export async function fetchProdutoPorCodigo(codigo) {
+  const API_BASE = getApiBaseUrl();
+  console.log("🔗 A usar API_BASE:", API_BASE);
+
+  const res = await fetch(`${API_BASE}/produto/${codigo}`, {
+    headers: { "ngrok-skip-browser-warning": "true" },
+  });
+
+  if (!res.ok) throw new Error("Erro ao buscar produto");
+  return res.json();
 }
+
 
 /* Atualizar stock com precisão,
 Soma ou subtração,
