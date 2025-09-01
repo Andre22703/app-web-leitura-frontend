@@ -6,6 +6,7 @@ import { getApiBaseUrl } from "../services/api";
 const apiUrl = getApiBaseUrl();
 console.log("API Base URL:", apiUrl);
 
+
 export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, familias, subfamilias }) {
   const [novoProduto, setNovoProduto] = useState({
     descricao: '',
@@ -17,12 +18,14 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     fornecedor: null,
     familia: null,
     subfamilia: null,
-    apiUrl
+    plu: null,
+    apiUrl,
+    
   });
 
-const NGROK_HEADERS = {
-  'ngrok-skip-browser-warning': 'true'
-};
+  const NGROK_HEADERS = {
+    'ngrok-skip-browser-warning': 'true'
+  };
 
 
 
@@ -32,6 +35,8 @@ const NGROK_HEADERS = {
     return String(sf.familia) === String(novoProduto.familia?.value);
   }).map(sf => ({ value: sf.codigo, label: sf.descricao }));
 
+  const [pluJaExiste, setPluJaExiste] = useState(false);
+  const [mensagemErroPLU, setMensagemErroPLU] = useState('');
 
 
   const [scannerAberto, setScannerAberto] = useState(false);
@@ -93,39 +98,80 @@ const NGROK_HEADERS = {
   }, [scannerAberto]);
 
   async function verificarProdutoExistente(codigo) {
-  if (!codigo) {
-    setProdutoJaExiste(false);
-    setMensagemErro('');
-    return;
-  }
-
-  try {
-    const baseUrl = getApiBaseUrl(); // 👈 pega sempre o valor atualizado
-    if (!baseUrl) {
-      console.warn("⚠️ API_BASE ainda não definido!");
+    if (!codigo) {
+      setProdutoJaExiste(false);
+      setMensagemErro('');
       return;
     }
 
-    const response = await fetch(`${baseUrl}/produto/${codigo}`, {
-      headers: {
-        ...NGROK_HEADERS,
+    try {
+      const baseUrl = getApiBaseUrl(); // 👈 pega sempre o valor atualizado
+      if (!baseUrl) {
+        console.warn("⚠️ API_BASE ainda não definido!");
+        return;
       }
-    });
 
-    if (response.ok) {
-      const produtoExistente = await response.json();
-      setProdutoJaExiste(true);
-      setMensagemErro(`⚠️ Já existe: ${produtoExistente.descricao}`);
-    } else {
+      const response = await fetch(`${baseUrl}/produto/${codigo}`, {
+        headers: {
+          ...NGROK_HEADERS,
+        }
+      });
+
+      if (response.ok) {
+        const produtoExistente = await response.json();
+        setProdutoJaExiste(true);
+        setMensagemErro(`⚠️ Já existe: ${produtoExistente.descricao}`);
+      } else {
+        setProdutoJaExiste(false);
+        setMensagemErro('');
+      }
+    } catch (err) {
+      console.error("Erro ao verificar produto existente:", err);
       setProdutoJaExiste(false);
       setMensagemErro('');
     }
-  } catch (err) {
-    console.error("Erro ao verificar produto existente:", err);
-    setProdutoJaExiste(false);
-    setMensagemErro('');
   }
-}
+
+
+  async function verificarPLUExistente(plu) {
+    if (!plu) {
+      setPluJaExiste(false);
+      setMensagemErroPLU('');
+      return;
+    }
+
+    try {
+      const baseUrl = getApiBaseUrl();
+      const res = await fetch(`${baseUrl}/produto/verificar-plu/${plu}`, {
+        headers: {
+          'ngrok-skip-browser-warning': 'true',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+
+        if (!data.disponivel) {
+          setPluJaExiste(true);
+          setMensagemErroPLU(`⚠️ PLU pertence a: ${data.produto.descricao}`);
+        } else {
+          setPluJaExiste(false);
+          setMensagemErroPLU('');
+        }
+      } else {
+        console.error("Erro na resposta do servidor:", res.status);
+        setPluJaExiste(false);
+        setMensagemErroPLU('');
+      }
+    } catch (err) {
+      console.error("Erro ao verificar PLU:", err);
+      setPluJaExiste(false);
+      setMensagemErroPLU('');
+    }
+  }
+
+
 
 
   function handleSubmit() {
@@ -139,13 +185,21 @@ const NGROK_HEADERS = {
       return;
     }
 
+    if (pluJaExiste) {
+      alert('⚠️ Este PLU já está em uso. Escolhe outro.');
+      return;
+    }
+
     onConfirmar({
       ...novoProduto,
       fornecedor: novoProduto.fornecedor.value,
       familia: novoProduto.familia?.value ?? null,
       subfam: novoProduto.subfamilia?.value ?? null,
+      plu: novoProduto.plu ?? null,
+       novo: true, 
     });
   }
+
 
   const optionsFornecedores = fornecedores.map(f => ({
     value: f.id,
@@ -292,19 +346,24 @@ const NGROK_HEADERS = {
               />
             </div>
 
+            {/* IVA */}
             <div className="mb-3">
-              <label className="form-label fw-semibold">Iva</label>
-              <input
-                type="number"
-                className="form-control form-control-lg"
-                name="iva"
-                value={novoProduto.iva}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                placeholder="0.00"
-              />
+              <label className="form-label fw-semibold">IVA</label>
+              <div className="d-flex justify-content-center gap-2">
+                {[6, 13, 23].map(valor => (
+                  <button
+                    key={valor}
+                    type="button"
+                    className={`btn ${novoProduto.iva === valor ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => setNovoProduto(prev => ({ ...prev, iva: valor }))}
+                  >
+                    {valor}%
+                  </button>
+                ))}
+              </div>
             </div>
+
+
 
             {/* Fornecedor */}
             <div className="mb-3">
@@ -329,7 +388,7 @@ const NGROK_HEADERS = {
               onChange={selected => setNovoProduto(prev => ({
                 ...prev,
                 familia: selected,
-                subfamilia: null 
+                subfamilia: null
               }))}
               placeholder="Seleciona uma família..."
               isClearable
@@ -352,6 +411,29 @@ const NGROK_HEADERS = {
               isDisabled={!novoProduto.familia} // só ativa se família selecionada
             />
           </div>
+
+
+          {/* PLU */}
+          <div className="mb-3">
+            <label className="form-label fw-semibold">PLU</label>
+            <input
+              type="number"
+              className={`form-control form-control-lg ${pluJaExiste ? 'is-invalid' : ''}`}
+              value={novoProduto.plu || ''}
+              onChange={async (e) => {
+                const valor = e.target.value;
+                setNovoProduto(prev => ({ ...prev, plu: valor }));
+                await verificarPLUExistente(valor);
+              }}
+            />
+            {mensagemErroPLU && (
+              <div className="invalid-feedback d-block">
+                {mensagemErroPLU}
+              </div>
+            )}
+          </div>
+
+
 
           <div className="modal-footer border-0 pt-0">
             <button className="btn btn-secondary btn-lg" onClick={onFechar}>Cancelar</button>

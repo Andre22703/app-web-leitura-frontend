@@ -520,6 +520,7 @@ return (
           onAbrirMargem={setProdutoParaMargem}
           onPedirConfirmacaoApagar={pedirConfirmacaoApagar}
           disabled={enviando}
+          setAlerta={setAlerta} 
         />
 
 

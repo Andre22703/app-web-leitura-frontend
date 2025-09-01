@@ -8,7 +8,8 @@ export default function ProdutoTable({
   onAbrirPrecoCompra,
   onAbrirMargem,
   onApagarProduto,
-  onPedirConfirmacaoApagar
+  onPedirConfirmacaoApagar,
+  setAlerta 
 }) {
 
   return (
@@ -36,6 +37,7 @@ export default function ProdutoTable({
               onAbrirMargem={onAbrirMargem}
               onApagarProduto={onApagarProduto}
               onPedirConfirmacaoApagar={onPedirConfirmacaoApagar}
+              setAlerta={setAlerta} 
             />
           ))}
         </tbody>

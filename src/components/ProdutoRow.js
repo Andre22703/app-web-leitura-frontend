@@ -7,7 +7,8 @@ export default function ProdutoRow({
   onAbrirPrecoCompra,
   onAbrirMargem,
   onApagarProduto,
-  onPedirConfirmacaoApagar
+  onPedirConfirmacaoApagar,
+   setAlerta
 }) {
   const margem = Number(produto.margembruta);
   const precoCompra = Number(produto.precocompra);
@@ -33,13 +34,26 @@ export default function ProdutoRow({
         {!isNaN(margem) ? `${margem}%` : 'N/D'}
       </td>
 
-      <td
-        className="text-primary fw-bold"
-        style={{ cursor: 'pointer', textAlign: 'center' }}
-        onClick={() => onAbrirStock({ ...produto, stockTotal })}
-      >
-        {produto.qtdstock} → (+{stockTotal})
-      </td>
+  <td
+  className="text-primary fw-bold"
+  style={{ cursor: 'pointer', textAlign: 'center' }}
+  title={produto.novo ? "Produto novo: apaga e cria de novo para alterar stock" : ""}
+  onClick={() => {
+    if (produto.novo) {
+      // Substitui o alert nativo
+      setAlerta({
+        tipo: 'erro',
+        mensagem: '⚠️ Produto criado recentemente. Para alterar o stock, apaga e cria de novo.'
+      });
+      return;
+    }
+    onAbrirStock({ ...produto, stockTotal });
+  }}
+>
+  {produto.qtdstock} → (+{stockTotal})
+</td>
+
+
 
 
       <td
