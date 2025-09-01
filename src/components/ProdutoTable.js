@@ -6,6 +6,7 @@ export default function ProdutoTable({
   alteracoesPendentesStock = {},
   onAbrirStock,
   onAbrirPrecoCompra,
+  onAbrirPrecoVenda,
   onAbrirMargem,
   onApagarProduto,
   onPedirConfirmacaoApagar,
@@ -33,8 +34,11 @@ export default function ProdutoTable({
               produto={produto}
               alteracoesPendentesStock={alteracoesPendentesStock}
               onAbrirStock={onAbrirStock}
+                onAbrirPrecoVenda={onAbrirPrecoVenda} 
+              
               onAbrirPrecoCompra={onAbrirPrecoCompra}
               onAbrirMargem={onAbrirMargem}
+              
               onApagarProduto={onApagarProduto}
               onPedirConfirmacaoApagar={onPedirConfirmacaoApagar}
               setAlerta={setAlerta} 

@@ -7,6 +7,7 @@ export default function ProdutoRow({
   onAbrirPrecoCompra,
   onAbrirMargem,
   onApagarProduto,
+   onAbrirPrecoVenda,
   onPedirConfirmacaoApagar,
    setAlerta
 }) {
@@ -64,7 +65,15 @@ export default function ProdutoRow({
         {!isNaN(precoCompra) ? precoCompra.toFixed(2) + '€' : 'N/D'}
       </td>
 
-      <td>{precoVenda}</td>
+      <td
+  className="text-primary fw-bold"
+  style={{ cursor: 'pointer' }}
+  onClick={() => onAbrirPrecoVenda(produto)}
+>
+  {precoVenda}
+</td>
+
+
 
       <td style={{ textAlign: 'center' }}>
         <button

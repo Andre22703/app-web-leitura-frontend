@@ -14,6 +14,8 @@ import {
 } from './services/api';
 import StockModal from './components/StockModal';
 import PrecoCompraModal from './components/PrecoCompraModal';
+import PrecoVendaModal from './components/PrecoVendaModal';
+
 import MargemModal from './components/MargemModal';
 import AlertaMensagem from './components/AlertaMensagem';
 import NovoProdutoModal from './components/NovoProdutoModal';
@@ -53,6 +55,7 @@ export default function App() {
 const [familias, setFamilias] = useState([]);
 const [subfamilias, setSubfamilias] = useState([]);
 
+const [produtoParaPrecoVenda, setProdutoParaPrecoVenda] = React.useState(null);
 
   const [mostrarModalNovoProduto, setMostrarModalNovoProduto] = useState(false);
   const [fornecedorSelecionado, setFornecedorSelecionado] = useState('');
@@ -66,6 +69,7 @@ const [subfamilias, setSubfamilias] = useState([]);
   const [produtoParaConfirmar, setProdutoParaConfirmar] = useState(null);
   const [produtoParaStock, setProdutoParaStock] = useState(null);
   const [produtoParaPrecoCompra, setProdutoParaPrecoCompra] = useState(null);
+  
   const [produtoParaMargem, setProdutoParaMargem] = useState(null);
   const [produtoParaApagar, setProdutoParaApagar] = useState(null);
 
@@ -343,6 +347,32 @@ function handleAtualizarMargemLocal(codbarras, novaMargem) {
   setAlerta({ tipo: 'info', mensagem: 'Alteração de margem bruta guardada localmente' });
 }
 
+
+function handleAtualizarPrecoVendaLocal(codbarras, novoPrecoVenda) {
+  setProdutos(prev =>
+    prev.map(p => {
+      if (p.codbarras === codbarras) {
+        const precoCompra = Number(p.precocompra);
+        const precoVenda = Number(novoPrecoVenda);
+        const novaMargem = precoCompra > 0
+          ? ((precoVenda - precoCompra) / precoCompra * 100).toFixed(2)
+          : 0;
+        return { ...p, margembruta: Number(novaMargem), precovenda: precoVenda };
+      }
+      return p;
+    })
+  );
+
+  setAlteracoesPendentes(prev => ({
+    ...prev,
+    margem: {
+      ...prev.margem,
+      [codbarras]: Number(((novoPrecoVenda - produtos.find(p => p.codbarras === codbarras).precocompra) / produtos.find(p => p.codbarras === codbarras).precocompra * 100).toFixed(2)),
+    },
+  }));
+}
+
+
 function handleCriarProdutoLocal(produto) {
   setProdutos(prev => [...prev, produto]);
   setAlteracoesPendentes(prev => ({
@@ -518,6 +548,7 @@ return (
           onAbrirStock={setProdutoParaStock}
           onAbrirPrecoCompra={setProdutoParaPrecoCompra}
           onAbrirMargem={setProdutoParaMargem}
+          onAbrirPrecoVenda={setProdutoParaPrecoVenda}
           onPedirConfirmacaoApagar={pedirConfirmacaoApagar}
           disabled={enviando}
           setAlerta={setAlerta} 
@@ -563,6 +594,17 @@ return (
         disabled={enviando}
       />
     )}
+
+
+    {produtoParaPrecoVenda && (
+  <PrecoVendaModal
+    produto={produtoParaPrecoVenda}
+    onFechar={() => setProdutoParaPrecoVenda(null)}
+    onConfirmar={handleAtualizarPrecoVendaLocal}
+    disabled={enviando}
+  />
+)}
+
 
     {mostrarModalNovoProduto && (
       <NovoProdutoModal
