@@ -650,9 +650,9 @@ return (
               <p>
                 <strong>Descrição:</strong> {produtoParaConfirmar.descricao}
               </p>
-
+<p>
               <strong>Código de Barras:</strong> {produtoParaConfirmar.codbarras}
-
+</p>
               <label htmlFor="quantidadeInput" className="form-label mt-3"><strong>Quantidade de Stock:</strong></label>
               <div className="d-flex align-items-center gap-2">
                 <button
