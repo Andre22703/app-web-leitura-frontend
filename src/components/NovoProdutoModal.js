@@ -20,7 +20,7 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
     subfamilia: null,
     plu: null,
     apiUrl,
-    
+
   });
 
   const NGROK_HEADERS = {
@@ -196,7 +196,7 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
       familia: novoProduto.familia?.value ?? null,
       subfam: novoProduto.subfamilia?.value ?? null,
       plu: novoProduto.plu ?? null,
-       novo: true, 
+      novo: true,
     });
   }
 
@@ -311,9 +311,11 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
                 name="qtdstock"
                 value={novoProduto.qtdstock}
                 onChange={handleChange}
+                onFocus={(e) => { if (e.target.value === 0 || e.target.value === '0') e.target.select(); }}
                 min="0"
                 placeholder="0"
               />
+
             </div>
 
             {/* Preço de Compra */}
@@ -325,6 +327,7 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
                 name="precocompra"
                 value={novoProduto.precocompra}
                 onChange={handleChange}
+                onFocus={(e) => { if (e.target.value === 0 || e.target.value === '0') e.target.select(); }}
                 min="0"
                 step="0.01"
                 placeholder="0.00"
@@ -340,6 +343,7 @@ export default function NovoProdutoModal({ onFechar, onConfirmar, fornecedores, 
                 name="margembruta"
                 value={novoProduto.margembruta}
                 onChange={handleChange}
+                onFocus={(e) => { if (e.target.value === 0 || e.target.value === '0') e.target.select(); }}
                 min="0"
                 step="0.01"
                 placeholder="0.00"
