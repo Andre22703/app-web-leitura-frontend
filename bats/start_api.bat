@@ -2,4 +2,4 @@
 REM ----------------------------------------
 REM Inicia a API Node.js
 REM ----------------------------------------
-node "C:\EDNAS\app-web-leitura\backend\server.js"
+node "C:\EDNAS\APP\app-web-leitura\backend\server.js"

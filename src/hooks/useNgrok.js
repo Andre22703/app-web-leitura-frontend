@@ -6,9 +6,9 @@ export function useNgrokUrl() {
   useEffect(() => {
     async function fetchNgrok() {
       try {
-        const res = await fetch('https://api.jsonbin.io/v3/b/68a2e0a5d0ea881f405c44d8', {
+        const res = await fetch('https://api.jsonbin.io/v3/b/68da52d643b1c97be953f81d', {
           headers: {
-            'X-Master-Key': '$2a$10$gT767Lq/V5VcVdbaS8StQObMLvicZ5SezhiMC6lwSt0iHPqCUzGNu', // substitui com a tua master key
+            'X-Master-Key': '$2a$10$Hq3xHhpwLRiMZ/yttxk3Wu6BsnJWk7v3acOnzpLVoNwvYRGXOxfSO', // substitui com a tua master key
             'Content-Type': 'application/json',
           },
         });
