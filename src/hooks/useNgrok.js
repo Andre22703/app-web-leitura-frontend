@@ -8,7 +8,7 @@ export function useNgrokUrl() {
       try {
         const res = await fetch('https://api.jsonbin.io/v3/b/68da52d643b1c97be953f81d', {
           headers: {
-            'X-Master-Key': '$2a$10$dFB8X2yaA./aPT1YsAQs/u58X7hDIzfOFUIqq5QoPGzcQHr2E/fz2', // substitui com a tua master key
+            'X-Master-Key': '$2a$10$U.JHvTeCTyRkRDrjMbDw2O4o38k0CBfUgo4echyvoYP5p1nrCzuRm', // substitui com a tua master key
             'Content-Type': 'application/json',
           },
         });
