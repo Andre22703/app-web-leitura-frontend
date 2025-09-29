@@ -94,11 +94,11 @@ useEffect(() => {
     const fetchLojas = async () => {
       try {
         const res = await fetch(
-          "https://api.jsonbin.io/v3/b/68a2e0a5d0ea881f405c44d8",
+          "https://api.jsonbin.io/v3/b/68da52d643b1c97be953f81d",
           {
             headers: {
               "X-Master-Key":
-                "$2a$10$RKrrtUJtw.UpRgJQAwsUyOElRGt4k7eDAUxluSs2g2cSmwhx1UIhW",
+                "$2a$10$dFB8X2yaA./aPT1YsAQs/u58X7hDIzfOFUIqq5QoPGzcQHr2E/fz2",
             },
           }
         );
@@ -152,11 +152,11 @@ useEffect(() => {
     async function fetchApiUrl() {
       try {
         const res = await fetch(
-          "https://api.jsonbin.io/v3/b/68a2e0a5d0ea881f405c44d8",
+          "https://api.jsonbin.io/v3/b/68da52d643b1c97be953f81d",
           {
             headers: {
               "X-Master-Key":
-                "$2a$10$RKrrtUJtw.UpRgJQAwsUyOElRGt4k7eDAUxluSs2g2cSmwhx1UIhW",
+                "$2a$10$dFB8X2yaA./aPT1YsAQs/u58X7hDIzfOFUIqq5QoPGzcQHr2E/fz2",
             },
           }
         );
